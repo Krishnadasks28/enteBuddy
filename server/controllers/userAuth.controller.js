@@ -1,8 +1,9 @@
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
-import bcrypt from "bcrypt";
+import bcrypt, { hash } from "bcrypt";
 import jwt from "jsonwebtoken";
 
+//signin controller
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -24,6 +25,7 @@ export const signin = async (req, res, next) => {
   }
 };
 
+// signup controller
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
   try {
@@ -39,6 +41,33 @@ export const signup = async (req, res, next) => {
     });
     newUser.save();
     res.status(200).json("User created successfully");
+  } catch (err) {
+    next(err);
+  }
+};
+
+//google auth
+export const googleAuth = async (req, res, next) => {
+  const { username, email } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    let userId;
+    if (existingUser) {
+      userId = existingUser._id;
+    } else {
+      const password = username + Math.round(Math.random() * 100000);
+      const newUser = new User({ name: username, email, password });
+      newUser.save();
+      userId = newUser._id;
+    }
+    const token = jwt.sign({ id: userId }, process.env.JWT_SECRET);
+    res
+      .cookie("access token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 24 * 60 * 60 * 10),
+      })
+      .status(200)
+      .json({ username, email });
   } catch (err) {
     next(err);
   }
