@@ -18,7 +18,7 @@ router.post("/addProduct", verifyAdmin, imageUpload, uploadProduct);
 router.get("/getProducts/:userId", verifyAdmin, getProduct);
 
 //product update api
-router.post(
+router.put(
   "/updateProduct/:userId/:productId",
   verifyAdmin,
   imageUpload,

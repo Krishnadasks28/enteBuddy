@@ -43,6 +43,21 @@ export const getCartItems = async (req, res, next) => {
   }
 };
 
+///remove item from cart
+export const removeFromCart = async(req,res,next) =>{
+  try{
+    const productId = req.body.productId
+    const thisCart = await cart.findOne({userId:req.user._id})
+    thisCart.removeFromCart(productId)
+    thisCart.save()
+    res.status(200).json("item removed from cart")
+  }
+  catch(err){
+    next(err)
+  }
+}
+
+
 ///add new address
 export const addAddress = async (req, res, next) => {
   try {
@@ -66,6 +81,7 @@ export const addAddress = async (req, res, next) => {
   }
 };
 
+
 ///get all addresses
 
 export const getAddresses = async(req,res,next) =>{
@@ -75,6 +91,36 @@ export const getAddresses = async(req,res,next) =>{
       res.status(400).json("No addresses")
     }
     res.status(200).json(addresses)
+  }
+  catch(err){
+    next(err)
+  }
+}
+
+///remove address
+export const removeAddress = async(req,res,next) =>{
+  try{
+    const addressId = req.body.addressId
+    const address = await userAddress.findOne({userId:req.user._id})
+    address.removeAddress(addressId)
+    address.save()
+    res.status(200).json("Address removed")
+  }
+  catch(err){
+    next(err)
+  }
+}
+
+
+///updateAddress
+export const updateAddress = async(req,res,next) => {
+  try{
+    const addressId = req.body.addressId
+    const updateData = req.body
+    const address = await userAddress.findOne({userId:req.user._id})
+    address.updateAddress(addressId, updateData)
+    address.save()
+    res.status(200).json("Address updated")
   }
   catch(err){
     next(err)

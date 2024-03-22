@@ -71,7 +71,36 @@ addressSchema.methods.pushAddress = function (address) {
   }
 };
 
+addressSchema.methods.removeAddress = function (addressId) {
+  try{
+    const newAddresses = this.addresses.filter((addr)=> addr._id != addressId)
+    this.addresses = newAddresses
+    return
+  }
+  catch(err){
+    console.log("Address error : ",err)
+  }
+}
+
+
+addressSchema.methods.updateAddress = function (addressId,updateData){
+  try{
+    const address = this.addresses.find((addr)=> addr._id == addressId)
+    console.log("ADDRESS : ",address)
+    for(const key in updateData){
+      if(updateData.hasOwnProperty(key) && (key in address)){
+        console.log("condition true : ")  
+        address[key] = updateData[key]
+      }
+    }
+    console.log(address)
+    return
+  }
+  catch(err){
+    console.log("Address error : ",err)
+  }
+}
+
 const userAddress = mongoose.model("userAddresses", addressSchema);
-addressSchema.methods.pushAddress.bind(userAddress);
 
 export default userAddress;

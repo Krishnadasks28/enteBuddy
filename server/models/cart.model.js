@@ -29,30 +29,37 @@ const cartSchema = mongoose.Schema({
   ],
   totalPrice: {
     type: Number,
-    default:0
+    default: 0,
   },
 });
 
-
-
 cartSchema.methods.addProduct = function (product) {
   try {
-    const existingPrductIndex = this.items.findIndex((item) =>
-      item.productId == product.productId
+    const existingPrductIndex = this.items.findIndex(
+      (item) => item.productId == product.productId
     );
     if (existingPrductIndex != -1) {
       this.items[existingPrductIndex].quantity++;
     } else {
-     this.items.push(product);
+      this.items.push(product);
     }
 
     this.totalPrice += product.price;
     return;
   } catch (err) {
-    console.log("eRRRor : ",err)
+    console.log("error in adding item to cart : ", err);
+  }
+};
+
+cartSchema.methods.removeFromCart = function (productId) {
+  try {
+    const cartItems = this.items.filter((item) => item._id != productId);
+    this.items = cartItems
+    return
+  } catch (err) {
+    console.log("error in removing item from cart : ", err);
   }
 };
 
 const cart = mongoose.model("cartItems", cartSchema);
-cartSchema.methods.addProduct.bind(cart);
 export default cart;
