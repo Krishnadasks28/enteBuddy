@@ -33,9 +33,7 @@ const cartSchema = mongoose.Schema({
   },
 });
 
-// cartSchema.methods.hasProduct = (productId) => {
-//   return this.items.some((item) => item.productId.equals(productId));
-// };
+
 
 cartSchema.methods.addProduct = function (product) {
   try {
