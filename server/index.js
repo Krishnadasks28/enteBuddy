@@ -6,9 +6,16 @@ import userRoute from './routes/user.route.js'
 import authRoute from './routes/userAuth.route.js'
 import adminRoute from './routes/admin.route.js'
 import cookieParser from "cookie-parser";
+import Razorpay from "razorpay";
 
 dotenv.config();
 const app = express();
+
+export const instance = new Razorpay({
+  key_id:process.env.RAZORPAY_ID,
+  key_secret:process.env.RAZORPAY_SECRET_KEY 
+})
+
 
 mongoose
   .connect("mongodb://localhost:27017/enteBuddy")

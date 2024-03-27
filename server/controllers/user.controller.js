@@ -17,7 +17,6 @@ export const addToCart = async (req, res, next) => {
       } else {
         const newCart = new cart({
           userId: req.user._id,
-          username: req.user.name,
           items: [],
         });
         newCart.save();
@@ -65,7 +64,6 @@ export const addAddress = async (req, res, next) => {
     if(address == null){
       const addressData = {
         userId:req.user._id,
-        username:req.user.name,
         addresses:[req.body]
       }
       const newAddress = new userAddress(addressData)
@@ -126,3 +124,13 @@ export const updateAddress = async(req,res,next) => {
     next(err)
   }
 }
+
+//get product list
+export const getProduct = async (req, res, next) => {
+  try {
+    let products = await product.find({});
+    res.status(200).json(products);
+  } catch (err) {
+    next(err);
+  }
+};

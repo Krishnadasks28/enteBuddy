@@ -1,77 +1,63 @@
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-//signin controller
-export const signin = async (req, res, next) => {
-  const { email, password } = req.body;
+
+// signup controller
+export const userAuth = async (req, res, next) => {
+  const mobile = req.body.mobile;
   try {
-    const validUser = await User.findOne({ email });
-    if (!validUser) return next(errorHandler(404, "user not found"));
-    const validPassword = bcrypt.compareSync(password, validUser.password);
-    if (!validPassword) return next(errorHandler(401, "Wrong credentials"));
-    const { password: pass, ...userinfo } = validUser._doc;
-    const token = jwt.sign({ userinfo }, process.env.JWT_SECRET);
+    const existingUser = await User.findOne({ mobile });
+    let userInfo;
+    let newUser;
+    if (existingUser) {
+      userInfo = existingUser;
+    } else {
+      newUser = new User({
+        mobile,
+      });
+      await newUser.save();
+      userInfo = newUser;
+    }
+    const token = jwt.sign({ userInfo }, process.env.JWT_SECRET);
     res
       .cookie("access_token", token, {
         httpOnly: true,
         secure: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 10),
+        expires: new Date(Date.now() + 24 * 60 * 60 * 100),
       })
       .status(200)
-      .json(userinfo);
-  } catch (err) {
-    next(err);
-  }
-};
-
-// signup controller
-export const signup = async (req, res, next) => {
-  const { username, email, password } = req.body;
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return next(errorHandler(401, "Existing User"));
-    }
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    const newUser = new User({
-      name: username,
-      email,
-      password: hashedPassword,
-    });
-    newUser.save();
-    res.status(200).json("User created successfully");
+      .json(userInfo);
   } catch (err) {
     next(err);
   }
 };
 
 //google auth
-export const googleAuth = async (req, res, next) => {
-  const { username, email } = req.body;
-  try {
-    const existingUser = await User.findOne({ email });
-    let userId;
-    if (existingUser) {
-      userId = existingUser._id;
-    } else {
-      const password = username + Math.round(Math.random() * 100000);
-      const newUser = new User({ name: username, email, password });
-      newUser.save();
-      id = newUser._id;
-    }
-    const userinfo = {username,_id:userId,email}
-    const token = jwt.sign({ userinfo }, process.env.JWT_SECRET);
-    res
-      .cookie("access_token", token, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 24 * 60 * 60 * 10),
-      })
-      .status(200)
-      .json({ username, email, id });
-  } catch (err) {
-    next(err);
-  }
-};
+// export const googleAuth = async (req, res, next) => {
+//   const { username, email } = req.body;
+//   try {
+//     const existingUser = await User.findOne({ email });
+//     let userId;
+//     if (existingUser) {
+//       userId = existingUser._id;
+//     } else {
+//       const password = username + Math.round(Math.random() * 100000);
+//       const newUser = new User({ name: username, email, password });
+//       newUser.save();
+//       id = newUser._id;
+//     }
+//     const userinfo = {username,_id:userId,email}
+//     const token = jwt.sign({ userinfo }, process.env.JWT_SECRET);
+//     res
+//       .cookie("access_token", token, {
+//         httpOnly: true,
+//         secure: true,
+//         expires: new Date(Date.now() + 24 * 60 * 60 * 10),
+//       })
+//       .status(200)
+//       .json({ username, email, id });
+//   } catch (err) {
+//     next(err);
+//   }
+// };

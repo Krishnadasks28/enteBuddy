@@ -1,7 +1,7 @@
 import admin from "../models/admin.model.js";
 import jwt from "jsonwebtoken";
 import { errorHandler } from "../utils/error.js";
-import product from "../models/prodect.model.js";
+import product from "../models/product.model.js";
 
 export const adminSignin = async (req, res, next) => {
   const { name, password } = req.body;

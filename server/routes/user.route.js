@@ -1,29 +1,39 @@
 import { Router } from "express";
 import { addAddress, addToCart, getAddresses, getCartItems, removeAddress, removeFromCart, updateAddress } from "../controllers/user.controller.js";
 import { verifyUser } from "../utils/authorisation.js";
+import { createOrder } from "../controllers/payments.controller.js";
 
 const router = Router()
 
-///add new product to cart and also update quantity in the cart
+//add new product to cart and also update quantity in the cart
 router.post('/addToCart/:userId',verifyUser,addToCart)
 
-///get products from cart
+//get products from cart
 router.get('/getCart/:userId',verifyUser,getCartItems)
 
-///remove product from cart
+//remove product from cart
 router.delete('/removeFromCart/:userId',verifyUser,removeFromCart)
 
-///add new address
+//add new address
 router.post('/addAddress/:userId',verifyUser,addAddress)
 
-///list all address
+//list all address
 router.get('/getAddresses/:userId',verifyUser,getAddresses)
 
-///updateADdress
+//updateADdress
 router.put('/updateAddress/:userId',verifyUser,updateAddress)
 
-///remove address
+//remove address
 router.delete("/removeAddress/:userId",verifyUser,removeAddress)
+
+
+
+
+
+///payments section
+
+//create razorpayOrder
+router.post('/createOrder',createOrder)
 
 
 export default router
