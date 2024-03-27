@@ -1,5 +1,6 @@
 import userAddress from "../models/address.model.js";
 import cart from "../models/cart.model.js";
+import product from "../models/product.model.js";
 import { errorHandler } from "../utils/error.js";
 
 /// add a new item to the product
@@ -8,11 +9,8 @@ export const addToCart = async (req, res, next) => {
     if (req.user) {
       const productData = req.body;
       const userCart = await cart.findOne({ userId: req.user._id });
-      console.log("user cart : ", req.user._id);
       if (userCart) {
-        console.log("first condition true");
         userCart.addProduct(productData);
-        console.log("NEw cart : ", userCart);
         userCart.save();
       } else {
         const newCart = new cart({
@@ -21,7 +19,6 @@ export const addToCart = async (req, res, next) => {
         });
         newCart.save();
         newCart.addProduct(productData);
-        console.log("cart : ", newCart);
       }
       res.status(200).json("product added to cart");
     } else {
