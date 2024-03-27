@@ -3,7 +3,7 @@ import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
 
-// signup controller
+// signup or signin controller
 export const userAuth = async (req, res, next) => {
   const mobile = req.body.mobile;
   try {
@@ -33,31 +33,30 @@ export const userAuth = async (req, res, next) => {
   }
 };
 
-//google auth
-// export const googleAuth = async (req, res, next) => {
-//   const { username, email } = req.body;
-//   try {
-//     const existingUser = await User.findOne({ email });
-//     let userId;
-//     if (existingUser) {
-//       userId = existingUser._id;
-//     } else {
-//       const password = username + Math.round(Math.random() * 100000);
-//       const newUser = new User({ name: username, email, password });
-//       newUser.save();
-//       id = newUser._id;
-//     }
-//     const userinfo = {username,_id:userId,email}
-//     const token = jwt.sign({ userinfo }, process.env.JWT_SECRET);
-//     res
-//       .cookie("access_token", token, {
-//         httpOnly: true,
-//         secure: true,
-//         expires: new Date(Date.now() + 24 * 60 * 60 * 10),
-//       })
-//       .status(200)
-//       .json({ username, email, id });
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+//google authenticaion
+export const googleAuth = async (req, res, next) => {
+  const { userName, email } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    let userId;
+    if (existingUser) {
+      userId = existingUser._id;
+    } else {
+      const newUser = new User({ userName, email });
+      await newUser.save();
+      userId = newUser._id;
+    }
+    const userinfo = {userName,_id:userId,email}
+    const token = jwt.sign({ userinfo }, process.env.JWT_SECRET);
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 24 * 60 * 60 * 100),
+      })
+      .status(200)
+      .json(userinfo);
+  } catch (err) {
+    next(err);
+  }
+};
