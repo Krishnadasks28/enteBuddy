@@ -30,9 +30,7 @@ export const verifyUser = (req, res, next) => {
     return next(errorHandler(401, "Unauthorised"));
   } else {
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      console.log("USER : ",user)
       if (err) {
-        console.log("ERROR : forbidden : ", err);
         return next(errorHandler(403, "Forbidden"));
       }
       req.user = user.userInfo;
