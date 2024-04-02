@@ -8,6 +8,8 @@ const storage = multer.diskStorage({
       cb(null, path.join(__dirname, "../uploads/primaryImages"));
     } else if (file.fieldname == "secondaryImages") {
       cb(null, path.join(__dirname, "../uploads/secondaryImages"));
+    } else if (file.fieldname == "bannerImage") {
+      cb(null, path.join(__dirname, "../uploads/bannerImages"));
     } else {
       cb(new Error("Unexpected field"));
     }
@@ -27,3 +29,8 @@ export const imageUpload = multer({ storage: storage }).fields([
   { name: "primaryImage", maxCount: 1 },
   { name: "secondaryImages", maxCount: 5 },
 ]);
+
+export const bannerImageUpload = multer({ storage: storage }).single(
+  "bannerImage"
+);
+

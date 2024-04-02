@@ -2,6 +2,7 @@ import admin from "../models/admin.model.js";
 import jwt from "jsonwebtoken";
 import { errorHandler } from "../utils/error.js";
 import product from "../models/product.model.js";
+import { banner } from "../models/banner.model.js";
 
 export const adminSignin = async (req, res, next) => {
   const { name, password } = req.body;
@@ -113,3 +114,57 @@ export const updateProduct = async (req, res, next) => {
     next(err);
   }
 };
+
+/// Banner management
+
+//add new banner
+export const addBanner = async(req,res,next)=>{
+  try{
+    const bannerData = {
+      title:req.body.title,
+      path:req.file.path,
+      startDate:new Date(req.body.startDate),
+      endDate:new Date(req.body.endDate)
+    }
+    const newBanner = new banner(bannerData)
+    await newBanner.save()
+    res.status(200).json("New banner added")
+  }
+  catch(err){
+    next(err)
+  }
+}
+
+//update banner
+export const updateBanner = async(req,res,next)=>{
+  try{
+    const bannerId = req.params.bannerId
+    const bannerData = {
+      title:req.body.title,
+      startDate:req.body.startDate ? new Date(req.body.startDate) : undefined ,
+      endDate:req.body.endDate ? new Date(req.body.endDate) : undefined
+    }
+    console.log("banner image : ",req.file)
+    if(req.file){
+      console.log("Bannder image true")
+      bannerData.path = req.file.path
+    }
+
+    await banner.updateOne({_id:bannerId},{$set:bannerData})
+    res.status(200).json("Banner updated")
+  }
+  catch(err){
+    next(err)
+  }
+}
+
+//get all banners data
+export const getBanners = async(req,res,next)=>{
+  try{
+    const allBanners = await banner.find({})
+    res.status(200).json(allBanners)
+  }
+  catch(err){
+    next(err)
+  }
+}

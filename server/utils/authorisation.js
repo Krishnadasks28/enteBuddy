@@ -13,7 +13,7 @@ export const verifyAdmin = (req, res, next) => {
       console.log("ERROR : forbidden : ", err);
       return next(errorHandler(403, "Forbidden"));
     }
-    if (req.params.userId != user.id) {
+    if (req.params.adminId != user.id) {
       return next(
         errorHandler(401, "You are not authorised use this account.")
       );
